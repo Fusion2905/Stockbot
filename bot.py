@@ -1,62 +1,50 @@
-import os
 import logging
 import yfinance as yf
+import time
 from telegram import Update
-from telegram.ext import (
-    ApplicationBuilder,
-    CommandHandler,
-    ContextTypes
-)
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-# Logging for debugging
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+
 logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
 )
 
-# Your bot token from environment variables
-TOKEN = os.getenv("BOT_TOKEN")
-PORT = int(os.environ.get("PORT", 8443))
-WEBHOOK_HOST = os.getenv("RAILWAY_STATIC_URL")  # e.g. mybot.up.railway.app
+# Retry logic for fetching stock info
+def get_stock_info(ticker_symbol):
+    for attempt in range(3):
+        try:
+            ticker = yf.Ticker(ticker_symbol)
+            info = ticker.info
 
-# /start command handler
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Welcome! Send /stock <symbol> to get stock price.")
+            if not info or "shortName" not in info:
+                raise ValueError("Invalid or missing stock info")
 
-# /stock command handler
-async def stock(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if len(context.args) != 1:
-        await update.message.reply_text("Usage: /stock <symbol>")
+            return {
+                "name": info.get("shortName", "N/A"),
+                "price": info.get("regularMarketPrice", "N/A"),
+                "currency": info.get("currency", "N/A")
+            }
+
+        except Exception as e:
+            logging.error(f"Error fetching stock: {e}")
+            time.sleep(1.5)  # Wait before retrying
+    return None
+
+# Command handler for /stock
+async def stock_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not context.args:
+        await update.message.reply_text("Please provide a stock symbol. Usage: /stock AAPL")
         return
 
     symbol = context.args[0].upper()
-    try:
-        data = yf.Ticker(symbol)
-        price = data.info.get("currentPrice")
+    stock_data = get_stock_info(symbol)
 
-        if price:
-            await update.message.reply_text(f"{symbol} current price: ${price}")
-        else:
-            await update.message.reply_text("Couldn't fetch price. Try another symbol.")
-    except Exception as e:
-        logging.error(f"Error fetching stock: {e}")
-        await update.message.reply_text("Error: Couldn't fetch data. Please try again.")
-
-# Main app
-if __name__ == "__main__":
-    if not TOKEN:
-        raise Exception("BOT_TOKEN is not set in environment variables.")
-
-    app = ApplicationBuilder().token(TOKEN).build()
-
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("stock", stock))
-
-    webhook_url = f"https://{WEBHOOK_HOST}/{TOKEN}"
-    app.run_webhook(
-        listen="0.0.0.0",
-        port=PORT,
-        url_path=TOKEN,
-        webhook_url=webhook_url
-    )
-
+    if stock_data:
+        reply = f"📈
