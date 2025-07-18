@@ -1,51 +1,91 @@
-# 📈 Telegram Stock Bot
+📈 Telegram Stock Bot
 
-A simple Telegram bot to check stock prices, 52-week highs/lows, and volume using yfinance.
+This bot allows you to get real-time stock data (price, volume, 52-week high/low) directly in Telegram by sending:
 
-## 🚀 Features
+/stock SYMBOL
 
-- `/stock <TICKER>`: View price, 52-week high/low, and volume.
-- Hosted on Railway.
+Example:
 
-## 📦 Requirements
-
-- Python 3.9+
-- A Telegram bot token from BotFather
-- Railway account
-
-## 🧠 Setup
-
-```bash
-git clone https://github.com/YOUR_USERNAME/stockbot.git
-cd stockbot
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env
-```
-
-Then paste your token in `.env`.
-
-## 🧪 Run locally
-
-```bash
-python bot.py
-```
-
-## 🛰️ Deploy on Railway
-
-1. Push your repo to GitHub.
-2. Go to [Railway](https://railway.app/).
-3. Create a new project → Deploy from GitHub.
-4. Add `TELEGRAM_BOT_TOKEN` in the Railway environment variables.
-5. Done! Your bot is live 🎉
-
-## 🤖 Usage
-
-On Telegram:
-
-```
-/start
 /stock AAPL
+
+🚀 Features
+
+    Current stock price
+
+    52-week high and low
+
+    Daily volume
+
+    Supports any stock supported by Twelve Data
+
+🧩 Tech Stack
+
+    Python 3
+
+    python-telegram-bot
+
+    Twelve Data API
+
+    Railway (for deployment)
+
+📦 Setup Instructions (Local or GitHub)
+
+    Clone the repo or upload the files to GitHub:
+
+git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git
+cd YOUR_REPO
+
+    Install dependencies
+
+pip install -r requirements.txt
+
+    Create a .env file
+
+cp .env.example .env
+
+Fill in your keys:
+
+TELEGRAM_BOT_TOKEN=your-telegram-bot-token
+TWELVE_DATA_API_KEY=your-twelve-data-api-key
+
+    Run the bot locally
+
+python bot.py
+
+☁️ Deployment with Railway
+
+    Go to https://railway.app and create a new project.
+
+    Link your GitHub repo containing the bot files.
+
+    Set up Environment Variables in the Railway dashboard:
+
+TELEGRAM_BOT_TOKEN=your-telegram-bot-token
+TWELVE_DATA_API_KEY=your-twelve-data-api-key
+
+    Railway should auto-detect Python and deploy the bot.
+
+    Monitor logs to ensure it's working correctly.
+
+🧪 Testing the Bot
+
+    Open Telegram
+
+    Start a chat with your bot (created via @BotFather)
+
+    Send a message like:
+
 /stock TSLA
-```
+
+If everything is set up, you should get real-time data.
+🔧 Debugging Tips
+
+    Use Railway Logs to monitor activity.
+
+    In case of errors, check .env variables and Twelve Data API usage.
+
+    For debugging, inspect print statements in bot.py.
+
+📄 License
+
+MIT — feel free to fork and modify.
