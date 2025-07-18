@@ -58,15 +58,11 @@ async def stock(update: Update, context: ContextTypes.DEFAULT_TYPE):
         low_52w = min(closes)
 
         reply = (
-            f"📈 Stock: {symbol}
-"
-            f"Price: ${close_price:.2f}
-"
-            f"52W High: ${high_52w:.2f}
-"
-            f"52W Low: ${low_52w:.2f}
-"
-            f"Volume: {volume}"
+            f"📈 *{ticker}* Stock Info\n"
+            f"💵 Price: {current_price} {currency}\n"
+            f"📈 52W High: {high_52w} {currency}\n"
+            f"📉 52W Low: {low_52w} {currency}\n"
+            f"🔁 Volume: {volume:,}\n"
         )
         await update.message.reply_text(reply)
 
