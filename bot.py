@@ -38,6 +38,8 @@ async def stock(update: Update, context: ContextTypes.DEFAULT_TYPE):
         response = requests.get(url, params=params)
         data = response.json()
 
+        print("🪵 DEBUG: API raw response:", data)
+
         if "status" in data and data["status"] == "error":
             await update.message.reply_text(f"Error: {data.get('message', 'Unknown error')}")
             return
@@ -76,7 +78,7 @@ def main():
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("stock", stock))
-    print("Bot started")
+    print("🤖 Bot started and listening...")
     app.run_polling()
 
 if __name__ == "__main__":
